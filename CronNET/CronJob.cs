@@ -103,7 +103,10 @@ namespace CronNET
         {
             cancelToken.Cancel();
 			cancelToken = new CancellationTokenSource();
-			activeJobTaskQueue = new List<Task>();
+            if (runMode != CronJobRunMode.RunOneInstance)
+			{
+				activeJobTaskQueue = new List<Task>();
+            }
         }
 
         protected void cleanActiveJobTaskQueue()
