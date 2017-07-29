@@ -7,7 +7,7 @@ namespace CronNET
 {
     public interface ICronDaemon
     {
-        void AddJob(string schedule, ThreadStart action);
+        void AddJob(string schedule, Action action);
         void Start();
         void Stop();
     }
@@ -24,9 +24,9 @@ namespace CronNET
             timer.Elapsed += timer_elapsed;
         }
 
-        public void AddJob(string schedule, ThreadStart action)
+        public void AddJob(string schedule, Action jobAction)
         {
-            var cj = new CronJob(schedule, action);
+            var cj = new CronJob(schedule, jobAction);
             cron_jobs.Add(cj);
         }
 
