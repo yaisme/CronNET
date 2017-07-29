@@ -102,7 +102,6 @@ namespace CronNET
         public void abort()
         {
             cancelToken.Cancel();
-            cancelToken.Dispose();
 			cancelToken = new CancellationTokenSource();
 			activeJobTaskQueue = new List<Task>();
         }
