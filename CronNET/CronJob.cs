@@ -51,13 +51,15 @@ namespace CronNET
         public void execute(DateTime date_time)
         {
             var runTime = date_time;
-            if(timeZoneInfo != null)
+            if (timeZoneInfo != null)
             {
                 runTime = TimeZoneInfo.ConvertTime(date_time, timeZoneInfo);
             }
+            var needJobQueue = runMode != CronJobRunMode.RunOneInstance;
+
             lock (_lock)
             {
-                if (runMode != CronJobRunMode.RunOneInstance)
+                if (needJobQueue)
                 {
                     cleanActiveJobTaskQueue();
 
@@ -71,14 +73,20 @@ namespace CronNET
                     return;
 
                 if (_task.Status == TaskStatus.Running)
+                {
+                    if (needJobQueue)
+                    {
+                        activeJobTaskQueue.Add(_task);
+                    }
                     return;
+                }
 
                 switch (runMode)
-				{
-					case CronJobRunMode.RunOneInstance:
-						abort();
-						_task = Task.Factory.StartNew(_job_action, cancelToken.Token);
-						return;
+                {
+                    case CronJobRunMode.RunOneInstance:
+                        abort();
+                        _task = Task.Factory.StartNew(_job_action, cancelToken.Token);
+                        return;
                     case CronJobRunMode.RunInParallel:
                         _task = Task.Factory.StartNew(_job_action, cancelToken.Token);
                         activeJobTaskQueue.Add(_task);
@@ -102,10 +110,10 @@ namespace CronNET
         public void abort()
         {
             cancelToken.Cancel();
-			cancelToken = new CancellationTokenSource();
+            cancelToken = new CancellationTokenSource();
             if (runMode != CronJobRunMode.RunOneInstance)
-			{
-				activeJobTaskQueue = new List<Task>();
+            {
+                activeJobTaskQueue = new List<Task>();
             }
         }
 
