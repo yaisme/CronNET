@@ -7,7 +7,7 @@ namespace CronNET
 {
     public interface ICronDaemon
     {
-        void AddJob(string schedule, Action action);
+        void AddJob(string schedule, Action action,string timeZoneId, CronJobRunMode runMode, int jobTaskQueueUpperLimit);
         void Start();
         void Stop();
     }
@@ -24,9 +24,9 @@ namespace CronNET
             timer.Elapsed += timer_elapsed;
         }
 
-        public void AddJob(string schedule, Action jobAction)
+        public void AddJob(string schedule, Action jobAction, string timeZoneId, CronJobRunMode runMode = CronJobRunMode.RunInParallel, int jobTaskQueueUpperLimit = 5)
         {
-            var cj = new CronJob(schedule, jobAction);
+            var cj = new CronJob(schedule, jobAction, timeZoneId, runMode, jobTaskQueueUpperLimit);
             cron_jobs.Add(cj);
         }
 

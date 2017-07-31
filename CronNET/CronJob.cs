@@ -27,12 +27,15 @@ namespace CronNET
         private TimeZoneInfo timeZoneInfo;
 
         protected CancellationTokenSource cancelToken { get; set; }
+        protected int jobTaskQueueUpperLimit { get; set; }
         protected IList<Task> activeJobTaskQueue { get; set; }
 
         public CronJobRunMode runMode { get; private set; }
 
-        public CronJob(string schedule, Action jobAction, string timeZoneId = null, CronJobRunMode runMode = CronJobRunMode.RunInParallel)
+        public CronJob(string schedule, Action jobAction, string timeZoneId, CronJobRunMode runMode = CronJobRunMode.RunInParallel, int jobTaskQueueUpperLimit = 5)
         {
+            this.runMode = runMode;
+            this.jobTaskQueueUpperLimit = jobTaskQueueUpperLimit - 1;
             activeJobTaskQueue = new List<Task>();
             cancelToken = new CancellationTokenSource();
 
@@ -47,7 +50,7 @@ namespace CronNET
 
         }
 
-        private object _lock = new object();
+        private readonly object _lock = new object();
         public void execute(DateTime date_time)
         {
             var runTime = date_time;
@@ -63,7 +66,7 @@ namespace CronNET
                 {
                     cleanActiveJobTaskQueue();
 
-                    if (activeJobTaskQueue.Count >= 5)
+                    if (activeJobTaskQueue.Count >= this.jobTaskQueueUpperLimit)
                     {
                         return;
                     }
@@ -72,13 +75,9 @@ namespace CronNET
                 if (!_cron_schedule.isTime(runTime))
                     return;
 
-                if (_task.Status == TaskStatus.Running)
+                if (needJobQueue && _task.Status == TaskStatus.Running)
                 {
-                    if (needJobQueue)
-                    {
-                        activeJobTaskQueue.Add(_task);
-                    }
-                    return;
+                    activeJobTaskQueue.Add(_task);
                 }
 
                 switch (runMode)
@@ -89,7 +88,6 @@ namespace CronNET
                         return;
                     case CronJobRunMode.RunInParallel:
                         _task = Task.Factory.StartNew(_job_action, cancelToken.Token);
-                        activeJobTaskQueue.Add(_task);
                         return;
                     case CronJobRunMode.RunInQueue:
                         var lastTaskInQueue = activeJobTaskQueue.LastOrDefault();
@@ -101,7 +99,6 @@ namespace CronNET
                         {
                             _task = Task.Factory.StartNew(_job_action, cancelToken.Token);
                         }
-                        activeJobTaskQueue.Add(_task);
                         return;
                 }
             }
@@ -119,7 +116,7 @@ namespace CronNET
 
         protected void cleanActiveJobTaskQueue()
         {
-            activeJobTaskQueue.Where((jobTask) => jobTask.Status == TaskStatus.Canceled || jobTask.Status == TaskStatus.Faulted || jobTask.Status == TaskStatus.RanToCompletion)
+            activeJobTaskQueue.Where((jobTask) => jobTask.IsFaulted || jobTask.IsCanceled || jobTask.IsCompleted)
                               .ToList()
                               .ForEach((jobTask) => activeJobTaskQueue.Remove(jobTask));
         }
