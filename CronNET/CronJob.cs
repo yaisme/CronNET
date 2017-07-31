@@ -35,13 +35,12 @@ namespace CronNET
         public CronJob(string schedule, Action jobAction, string timeZoneId, CronJobRunMode runMode = CronJobRunMode.RunInParallel, int jobTaskQueueUpperLimit = 5)
         {
             this.runMode = runMode;
-            this.jobTaskQueueUpperLimit = jobTaskQueueUpperLimit - 1;
+            this.jobTaskQueueUpperLimit = jobTaskQueueUpperLimit;
             activeJobTaskQueue = new List<Task>();
             cancelToken = new CancellationTokenSource();
 
             _cron_schedule = new CronSchedule(schedule);
             _job_action = jobAction;
-            _task = new Task(_job_action, cancelToken.Token);
 
             if (!string.IsNullOrEmpty(timeZoneId))
             {
@@ -75,19 +74,16 @@ namespace CronNET
                 if (!_cron_schedule.isTime(runTime))
                     return;
 
-                if (needJobQueue && _task.Status == TaskStatus.Running)
-                {
-                    activeJobTaskQueue.Add(_task);
-                }
-
                 switch (runMode)
                 {
                     case CronJobRunMode.RunOneInstance:
                         abort();
                         _task = Task.Factory.StartNew(_job_action, cancelToken.Token);
                         return;
-                    case CronJobRunMode.RunInParallel:
-                        _task = Task.Factory.StartNew(_job_action, cancelToken.Token);
+					case CronJobRunMode.RunInParallel:
+						activeJobTaskQueue.Add(_task);
+						_task = Task.Factory.StartNew(_job_action, cancelToken.Token);
+						activeJobTaskQueue.Add(_task);
                         return;
                     case CronJobRunMode.RunInQueue:
                         var lastTaskInQueue = activeJobTaskQueue.LastOrDefault();
@@ -98,7 +94,8 @@ namespace CronNET
                         else
                         {
                             _task = Task.Factory.StartNew(_job_action, cancelToken.Token);
-                        }
+						}
+						activeJobTaskQueue.Add(_task);
                         return;
                 }
             }
