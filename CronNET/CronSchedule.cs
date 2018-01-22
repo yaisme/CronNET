@@ -30,12 +30,14 @@ namespace CronNET
         public List<int> days_of_month;
         public List<int> months;
         public List<int> days_of_week;
+		private bool bDaysOfMonthRestricted = false;
+		private bool bDaysOfWeeksRestricted = false;
 
-        #endregion
+		#endregion
 
-        #region Public Constructors
+		#region Public Constructors
 
-        public CronSchedule()
+		public CronSchedule()
         {
         }
 
@@ -64,9 +66,12 @@ namespace CronNET
         {
             return minutes.Contains(date_time.Minute) &&
                    hours.Contains(date_time.Hour) &&
-                   days_of_month.Contains(date_time.Day) &&
                    months.Contains(date_time.Month) &&
-                   days_of_week.Contains((int)date_time.DayOfWeek);
+				   // if both values restricted : just one needs to correspond
+				   ((bDaysOfMonthRestricted && bDaysOfWeeksRestricted && (days_of_month.Contains(date_time.Day) || days_of_week.Contains((int)date_time.DayOfWeek))) ||
+				   // if one or no values restricted : both must correspond
+				   (days_of_month.Contains(date_time.Day) && days_of_week.Contains((int)date_time.DayOfWeek))
+				   );
         }
 
         private void generate()
@@ -81,21 +86,34 @@ namespace CronNET
                 generate_hours(matches[1].ToString());
             else
                 generate_hours("*");
-            
-            if (matches.Count > 2)
-                generate_days_of_month(matches[2].ToString());
-            else
-                generate_days_of_month("*");
+
+			if (matches.Count > 2)
+			{
+				if (!matches[2].ToString().Equals("*")) bDaysOfMonthRestricted = true;
+
+				generate_days_of_month(matches[2].ToString());
+			}
+			else
+			{
+				bDaysOfMonthRestricted = true;
+				generate_days_of_month("*");
+			}
             
             if (matches.Count > 3)
                 generate_months(matches[3].ToString());
             else
                 generate_months("*");
-            
-            if (matches.Count > 4)
-                generate_days_of_weeks(matches[4].ToString());
-            else
-                generate_days_of_weeks("*");
+
+			if (matches.Count > 4)
+			{
+				if (!matches[4].ToString().Equals("*")) bDaysOfWeeksRestricted = true;
+				generate_days_of_weeks(matches[4].ToString());
+			}
+			else
+			{
+				bDaysOfWeeksRestricted = true;
+				generate_days_of_weeks("*");
+			}
         }
 
         private void generate_minutes(string match)
