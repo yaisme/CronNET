@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CronNET", "CronNET\CronNET.csproj", "{F31D7AF3-FDFA-44F1-9C63-305BAF11D002}"
 EndProject
@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{EA4722
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CronSTD", "CronSTD\CronSTD.csproj", "{8AF030CA-B707-4D25-93F5-60A1174ACD3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,8 +30,15 @@ Global
 		{6FCFBDF4-ECB7-4FC2-A376-E962B11D487D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FCFBDF4-ECB7-4FC2-A376-E962B11D487D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FCFBDF4-ECB7-4FC2-A376-E962B11D487D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AF030CA-B707-4D25-93F5-60A1174ACD3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AF030CA-B707-4D25-93F5-60A1174ACD3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AF030CA-B707-4D25-93F5-60A1174ACD3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AF030CA-B707-4D25-93F5-60A1174ACD3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B9D045BF-39BC-418C-A2D7-BB95DE558563}
 	EndGlobalSection
 EndGlobal
