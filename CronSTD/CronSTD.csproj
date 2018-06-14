@@ -10,6 +10,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/yaisme/CronNET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/yaisme/CronNET</RepositoryUrl>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
 </Project>

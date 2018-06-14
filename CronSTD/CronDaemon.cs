@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Timers;
+using System.Threading;
 
 namespace CronSTD
 {
     public interface ICronDaemon
     {
-        void AddJob(string schedule, Action action, string timeZoneId, CronJobRunMode runMode, int jobTaskQueueUpperLimit);
+        void AddJob(string schedule, ThreadStart action);
         void Start();
         void Stop();
     }
 
     public class CronDaemon : ICronDaemon
     {
-        private readonly Timer timer = new Timer(30000);
+        private readonly System.Timers.Timer timer = new System.Timers.Timer(30000);
         private readonly List<ICronJob> cron_jobs = new List<ICronJob>();
         private DateTime _last = DateTime.Now;
 
@@ -23,9 +24,9 @@ namespace CronSTD
             timer.Elapsed += timer_elapsed;
         }
 
-        public void AddJob(string schedule, Action jobAction, string timeZoneId, CronJobRunMode runMode = CronJobRunMode.RunInParallel, int jobTaskQueueUpperLimit = 5)
+        public void AddJob(string schedule, ThreadStart action)
         {
-            var cj = new CronJob(schedule, jobAction, timeZoneId, runMode, jobTaskQueueUpperLimit);
+            var cj = new CronJob(schedule, action);
             cron_jobs.Add(cj);
         }
 
