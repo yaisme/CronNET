@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Sataya Boonchaleaw</Authors>
+    <Company>YaIs.Me</Company>
+    <Product>Crontab .NET Standard</Product>
+    <Description />
+    <PackageTags>Crontab; Cronjob; Cron</PackageTags>
   </PropertyGroup>
 
 </Project>
