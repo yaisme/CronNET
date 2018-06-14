@@ -5,8 +5,11 @@
     <Authors>Sataya Boonchaleaw</Authors>
     <Company>YaIs.Me</Company>
     <Product>Crontab .NET Standard</Product>
-    <Description />
+    <Description>Crontab using .NET Standard 2.0, Fork form Cron.NET</Description>
     <PackageTags>Crontab; Cronjob; Cron</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/yaisme/CronNET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yaisme/CronNET</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
